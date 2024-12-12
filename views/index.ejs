@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+  <link rel="stylesheet" href="stylesheets/style.css">
+
+  <style>
+    #main{
+      background-color: black;
+    }
+    html::-webkit-scrollbar {
+  width: 5px;
+}
+ 
+html::-webkit-scrollbar-track {
+  background: rgb(116, 116, 116);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+ 
+html::-webkit-scrollbar-thumb {
+  background: rgb(51, 255, 0);
+  border-radius: 20px;
+}
+    #playlist{
+      height: 8vh;
+      width:100%;
+      /* background-color: red; */
+      /* position: absolute; */
+      top: 40%;
+      display: none;
+      transition: all ease .5s;
+    }
+    #playlist input{
+      width: 100%;
+      padding: 10px 0;
+      border-radius: 10px;
+    }
+    #playlist button{
+      padding: 10px 20px;
+      width: 100%;
+      background-color: rgb(243, 243, 243);
+      font-size: 18px;
+      color: black;
+      display: none;
+    }
+    .playlists{
+      width: 100%;
+      /* background-color: gray; */
+      color: white;
+      padding-left: 60px;
+    }
+    .playlists h2{
+      font-size: 20px;
+    }
+    .playlists ul li{
+      list-style: none;
+      /* border: 1px solid white; */
+    }
+    .playlists ul li a{
+      text-decoration: none;
+      color: white;
+      font-size: 18px;
+    }
+    .playlists button{
+      padding: 0 30px;
+      margin-bottom: 5px;
+    }
+    .playlists button{
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  
+  <div id="main">
+    <div class="menu">
+      <i id="menubtn" class="ri-menu-fold-fill"></i>
+    </div>
+    <div class="left">
+      
+      <a href="/">
+        <button>
+          <i class="ri-home-4-fill"></i>
+          <p>Home</p>
+        </button>
+      </a>
+      <a href="/search">
+        <button>
+          <i class="ri-search-eye-line"></i>
+          <p>Search</p>
+        </button>
+      </a>
+        <button id="play">
+          <i class="ri-play-list-line"></i>
+          <p>Create Playlist</p>
+          <!-- <i class="ri-add-box-fill"></i> -->
+        </button>
+      <form id="playlist" action="/createplaylist" method="POST">
+        <input id="cplaylist" type="text" name="name" placeholder="Playlist Name" required>
+        <button  id="cbtn" type="submit">Create Playlist</button>
+      </form>
+      <div class="playlists">
+        <h2>All Playlists</h2>
+        <ul>
+          <% playlists.forEach(function(playlist) { %>
+            <li>
+              <a href="/playlist/<%= playlist._id %>"><button>
+                <%= playlist.name %>
+              </button></a>
+            </li>
+          <% }) %>
+        </ul>
+      </div>
+      <a href="/liked">
+        <button>
+          <i style="color: red;" class="ri-heart-3-fill"></i>
+          <p>Liked Songs</p>
+        </button>
+      </a>
+      <p style="color: white; margin: 10px 20px;">Curently Playing song:</p>
+      <div id="song-details">
+       <img  src="https://play-lh.googleusercontent.com/cShys-AmJ93dB0SV8kE6Fl5eSaf4-qMMZdwEDKI5VEmKAXfzOqbiaeAsqqrEBCTdIEs=w240-h480-rw">
+       <div class="inbox">
+         <h2>Title:title</h2>
+       <p>Artist: artist</p>
+       </div>
+    </div>
+    
+      <a  href="/Logout">
+        <button style="margin-top: 30px;" >
+          <i class="ri-logout-box-line"></i>
+          <p>Logout</p>
+        </button>
+      </a>
+    </div>
+    <div class="right">
+     <div class="music">
+      <% currentUser.playlist[0].songs.forEach(function(song){%>
+        <div class="card" onclick="songCardClicked('<%= song.filename %>', '<%= song.title %>', '<%= song.artist %>', '<%= song.poster %>');">
+          <div class="img">
+            <img  src="/poster/<%=song.poster%>">
+            <button>
+              <svg height="16" role="img" width="16" viewBox="0 0 24 24" aria-hidden="true"><polygon points="21.57 12 5.98 3 5.98 21 21.57 12" fill="currentColor"></polygon></svg>
+            </button>
+          </div>
+          <div class="textos">
+            <h2><%=song.title%></h2>
+            <p><%=song.artist%></p>
+          </div>
+          <form action="/like/<%= song._id %>" method="POST">
+            <button style="background-color: transparent; border: none; outline: none; font-size: 25px;" type="submit">
+              <% if (currentUser.likes.includes(song._id.toString())) { %>
+                <i style="color: red;" class="ri-heart-3-fill"></i>
+                
+              <% } else { %>
+                <i style="color: gray;" class="ri-heart-3-fill"></i>
+              <% } %>
+            </button>
+          </form>
+        </div>
+      
+      <%}) %>
+    
+
+      
+    
+      <audio src="" controls></audio> <!-- Remove the src attribute -->
+     </div>
+    </div>
+  </div>
+  <script loop src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js" integrity="sha512-emSwuKiMyYedRwflbZB2ghzX8Cw8fmNVgZ6yQNNXXagFzFOaQmbvQ1vmDkddHjm5AITcBIZfC7k4ShQSjgPAmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <script>
+    document.querySelector("#menubtn").addEventListener("click", function() {
+    var leftElement = document.querySelector(".left");
+    if (leftElement.style.top === "0px" || leftElement.style.top === "") {
+        leftElement.style.top = "-100%";
+    } else {
+        leftElement.style.top = "0";
+    }
+});
+
+    
+
+
+    function songCardClicked(filename, title, artist, poster) {
+    document.querySelector('audio').setAttribute('src', `/stream/${filename}`);
+    document.querySelector('audio').play();
+
+    // Get the element where you want to display the song details
+    const songDetailsElement = document.getElementById('song-details');
+
+    // Update the inner HTML of the element with song details
+    songDetailsElement.innerHTML = `
+    <img  src="/poster/${poster}">
+        <div class="inbox">
+          <h2>Title: ${title}</h2>
+        <p>Artist: ${artist}</p>
+        </div>
+    `;
+}
+
+
+    document.querySelector("#play").addEventListener("click", function () {
+    var playlist = document.querySelector("#playlist");
+    if (playlist.style.display === "none" || playlist.style.display === "") {
+        playlist.style.display = "block";
+    } else {
+        playlist.style.display = "none";
+    }
+});
+
+document.querySelector("#cplaylist").addEventListener('keyup', function(event) {
+        // Check if the "Enter" key is pressed
+        if (event.key === 'Enter') {
+            // Simulate a click on the search button
+            document.querySelector("#cbtn").click();
+        }
+    });
+
+
+
+  
+
+
+    
+  </script>
+</body>
+</html>

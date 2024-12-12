@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+     <link rel="stylesheet" href="/stylesheets/style.css">
+    <style>
+
+       
+
+  .searchbox{
+    /* position: absolute; */
+    top: 20px;
+    height: 50px;
+    width: 100%;
+    /* background-color: red; */
+    /* padding: 0 20px; *
+    /* background-color: red; */
+  }
+  .searchbox button{
+    background-color: white;
+  }
+  .searchbox input{
+    /* background-color: rgb(36, 166, 0); */
+    padding: 12px 30px;
+    border-radius: 10px;
+    border: none;
+    color: white;
+  }
+  .searchbox #btn{
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    background-color: rgb(85, 85, 85);
+    color: white;
+  }
+  
+  @media (max-width:600px) {
+    .left{
+    height: 40vh;
+    top: 0;
+  }
+  }
+  
+ 
+  
+    </style>
+</head>
+<body>
+  <div id="main">
+    <div class="menu">
+      <i id="menubtn" class="ri-menu-fold-fill"></i>
+    </div>
+    <div class="left">
+        
+      <a href="/">
+          <button>
+              <i class="ri-home-4-fill"></i>
+              <p>Home</p>
+            </button>
+      </a>
+      <a href="/search">
+        <button>
+          <i class="ri-search-eye-line"></i>
+          <p>Search</p>
+        </button>
+      </a>
+      <div class="searchbox">
+        <input id="searchInput" style="color: black;" type="text" placeholder="Enter music title">
+<button style="display: none;" id="btn" onclick="searchSong()" style="color: black;">search</button>
+    </div>
+      <a href="/">
+        <button>
+          <i class="ri-play-list-line"></i>
+          <p>Create Playlist</p>
+        </button>
+      </a>
+      <a href="/liked">
+        <button>
+          <i style="color: red;" class="ri-heart-3-fill"></i>
+          <p>Liked Songs</p>
+        </button>
+      </a>
+      <a  href="/Logout">
+        <button  >
+          <i class="ri-logout-box-line"></i>
+          <p>Logout</p>
+        </button>
+      </a>
+    </div>
+    <div class="right">
+      
+        
+      <div class="music">
+
+      </div>
+      <audio src="/stream/" controls></audio>
+      
+  </div>
+  </div>
+    
+
+    
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js" integrity="sha512-emSwuKiMyYedRwflbZB2ghzX8Cw8fmNVgZ6yQNNXXagFzFOaQmbvQ1vmDkddHjm5AITcBIZfC7k4ShQSjgPAmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script>
+       document.querySelector("#menubtn").addEventListener("click", function() {
+    var leftElement = document.querySelector(".left");
+    if (leftElement.style.top === "0px" || leftElement.style.top === "") {
+        leftElement.style.top = "-100%";
+    } else {
+        leftElement.style.top = "0";
+    }
+});
+      async function searchSong() {
+        const result = await axios.post('/search', {
+          search: document.querySelector('input').value
+        })
+  
+        let clutter = ''
+  
+        result.data.songs.forEach(song => {
+          clutter += ` <div class="card" onclick="songCardClicked('${song.filename}')">
+          <div class="img">
+            <img src="/poster/${song.poster}">
+            <button>
+              <svg height="16" role="img" width="16" viewBox="0 0 24 24" aria-hidden="true"><polygon points="21.57 12 5.98 3 5.98 21 21.57 12" fill="currentColor"></polygon></svg>
+            </button>
+          </div>
+          <div class="textos">
+            <h2>${song.title}</h2>
+            <p>${song.artist}</p>
+          </div>
+          
+        </div>`
+        });
+  
+        document.querySelector('.music').innerHTML = clutter
+  
+  
+  
+      }
+  
+      function songCardClicked(filename) {
+        document.querySelector('audio').setAttribute('src', `/stream/${filename}`)
+        document.querySelector('audio').play()
+      }
+
+      const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('btn');
+
+    // Add an event listener to the input field
+    searchInput.addEventListener('keyup', function(event) {
+        // Check if the "Enter" key is pressed
+        if (event.key === 'Enter') {
+            // Simulate a click on the search button
+            searchButton.click();
+        }
+    });
+    document.querySelector("#menubtn").addEventListener("click", function() {
+    var leftElement = document.querySelector(".left");
+    if (leftElement.style.top === "0px" || leftElement.style.top === "") {
+        leftElement.style.top = "-100%";
+    } else {
+        leftElement.style.top = "0";
+    }
+});
+
+    </script>
+</body>
+</html>

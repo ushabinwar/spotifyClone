@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <title>Liked Songs</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    
+</head>
+<body>
+  <div id="main">
+    <div class="menu">
+      <i id="menubtn" class="ri-menu-fold-fill"></i>
+    </div>
+    <div class="left">
+      <a href="/">
+          <button>
+              <i class="ri-home-4-fill"></i>
+              <p>Home</p>
+            </button>
+      </a>
+      <a href="/search">
+        <button>
+          <i class="ri-search-eye-line"></i>
+          <p>Search</p>
+        </button>
+      </a>
+      <a href="/">
+        <button>
+          <i class="ri-play-list-line"></i>
+          <p>Create Playlist</p>
+        </button>
+      </a>
+      <a href="/liked">
+        <button>
+          <i style="color: red;" class="ri-heart-3-fill"></i>
+          <p>Liked Songs</p>
+        </button>
+      </a>
+      <a  href="/Logout">
+        <button style="margin-top: 230px;" >
+          <i class="ri-logout-box-line"></i>
+          <p>Logout</p>
+        </button>
+      </a>
+    </div>
+    <div class="right">
+  
+      <div class="music">
+          <% likedSongs.forEach(song => { %>
+              <div class="card" onclick="songCardClicked('<%= song.filename %>')">
+                  <div class="img">
+                    <img src="/poster/<%=song.poster%>">
+                    <button>
+                      <svg height="16" role="img" width="16" viewBox="0 0 24 24" aria-hidden="true"><polygon points="21.57 12 5.98 3 5.98 21 21.57 12" fill="currentColor"></polygon></svg>
+                    </button>
+                  </div>
+                  <div class="textos">
+                    <h2><%=song.title%></h2>
+                    <p><%=song.artist%></p>
+                  </div>
+                  <form action="/like/<%= song._id %>" method="POST">
+                    <button style="background-color: transparent; border: none; outline: none; font-size: 25px;" type="submit">
+                        <i style="color: red;" class="ri-heart-3-fill"></i>
+                    </button>
+                  </form>
+                </div>
+          <% }); %>
+      </div>
+      <audio src="/stream/" controls></audio>
+  </div>
+  </div>
+    
+   
+
+    <script>
+        function songCardClicked(filename) {
+        document.querySelector('audio').setAttribute('src', `/stream/${filename}`)
+        document.querySelector('audio').play()
+      }
+      document.querySelector("#menubtn").addEventListener("click", function() {
+    var leftElement = document.querySelector(".left");
+    if (leftElement.style.top === "0px" || leftElement.style.top === "") {
+        leftElement.style.top = "-100%";
+    } else {
+        leftElement.style.top = "0";
+    }
+});
+    </script>
+</body>
+</html>

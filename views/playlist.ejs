@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body>
+    <div id="main">
+        <div class="left">
+            <a href="/">
+                <button>
+                    <i class="ri-home-4-fill"></i>
+                    <p>Home</p>
+                  </button>
+            </a>
+            <a href="/search">
+              <button>
+                <i class="ri-search-eye-line"></i>
+                <p>Search</p>
+              </button>
+            </a>
+            <a href="/playlist">
+              <button>
+                <i class="ri-play-list-line"></i>
+                <p>Create Playlist</p>
+              </button>
+            </a>
+            <a href="/liked">
+              <button>
+                <i style="color: red;" class="ri-heart-3-fill"></i>
+                <p>Liked Songs</p>
+              </button>
+            </a>
+            <a  href="/Logout">
+              <button style="margin-top: 230px;" >
+                <i class="ri-logout-box-line"></i>
+                <p>Logout</p>
+              </button>
+            </a>
+          </div>
+        <div class="right">
+            <% playlists.forEach(function(playlist) { %>
+                <div class="playlist">
+                  <h2><%= playlist.name %></h2>
+                  <ul>
+                    <% playlist.songs.forEach(function(song) { %>
+                      <li><%= song.title %> - <%= song.artist %></li>
+                    <% }) %>
+                  </ul>
+                </div>
+              <% }) %>
+              
+              
+        </div>
+    </div>
+    
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+      .left h2{
+        font-size: 18px;
+        /* white-space: nowrap; */
+        color: white;
+        padding-left: 65px;
+        margin-bottom: 10px;
+      }
+      .searchbox input{
+        margin-left: 65px;
+        padding: 10px 0;
+      }
+      .card #remove , .card #add{
+    background-color: transparent;
+    border-radius: 50%;
+    color: rgba(255, 255, 255, 0.511);
+    border: none;
+    font-size: 30px;
+    margin-left: 90%;
+  }
+  @media (max-width:600px) {
+    .left{
+    height: 40vh;
+  }
+  }
+    </style>
+</head>
+<body>
+    <div id="main">
+      <div class="menu">
+        <i id="menubtn" class="ri-menu-fold-fill"></i>
+      </div>
+        <div class="left">
+      
+            <a href="/">
+              <button>
+                <i class="ri-home-4-fill"></i>
+                <p>Home</p>
+              </button>
+            </a>
+              <button id="play">
+                <i class="ri-play-list-line"></i>
+                <p>Create Playlist</p>
+                <!-- <i class="ri-add-box-fill"></i> -->
+              </button>
+            <form id="playlist" action="/createplaylist" method="POST">
+              <input id="c-playlist" type="text" name="name" placeholder="Playlist Name" required>
+              <button  id="c-btn" type="submit">Create Playlist</button>
+            </form>
+  
+            <h2>PLAYLIST NAME: <%= playlist.name %></h2>
+             <div class="searchbox">
+                  <input id="searchInput" style="color: black;" type="text" placeholder="Enter music title">
+          <button style="display: none;" id="btn" onclick="searchSong()" style="color: black;">search</button>
+              </div>
+              <form action="/playlist/<%= playlist._id %>/delete" method="POST">
+                <button style="font-size: 12px; padding-left: 40%;" type="submit">Delete Playlist<i class="ri-delete-bin-fill"></i></button>
+              </form>
+              
+          </div>
+        <div class="right">
+            <div class="music">
+                
+            <% playlist.songs.forEach(function(song) { %>
+                <div class="card" onclick="songCardClicked('<%= song.filename %>')">
+                    <div class="img">
+                      <img src="/poster/<%=song.poster%>">
+                      <button>
+                        <svg height="16" role="img" width="16" viewBox="0 0 24 24" aria-hidden="true"><polygon points="21.57 12 5.98 3 5.98 21 21.57 12" fill="currentColor"></polygon></svg>
+                      </button>
+                    </div>
+                    <div class="textos">
+                      <h2><%=song.title%></h2>
+                      <p><%=song.artist%></p>
+                    </div>
+                    <form action="/like/<%= song._id %>" method="POST">
+                      
+                    </form>
+                    <button id="remove"  onclick="removeSongFromPlaylist('<%= playlist._id %>', '<%= song._id %>')"><i class="ri-close-circle-fill"></i></button>
+                  </div>
+              <% }) %>
+              <div class="searchsong">
+        
+                <div class="music musi">
+
+                </div>
+              </div>
+              
+              <audio src="/stream/" controls></audio>
+            </div>
+
+            
+        </div>
+  
+        
+    </div>
+    
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js" integrity="sha512-emSwuKiMyYedRwflbZB2ghzX8Cw8fmNVgZ6yQNNXXagFzFOaQmbvQ1vmDkddHjm5AITcBIZfC7k4ShQSjgPAmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+  async function searchSong() {
+    const result = await axios.post('/search', {
+      search: document.querySelector('input').value
+    })
+
+    let clutter = ''
+
+    result.data.songs.forEach(song => {
+      clutter += ` <div class="card" onclick="songCardClicked('${song.filename}')">
+      <div class="img">
+        <img src="/poster/${song.poster}">
+        <button>
+          <svg height="16" role="img" width="16" viewBox="0 0 24 24" aria-hidden="true"><polygon points="21.57 12 5.98 3 5.98 21 21.57 12" fill="currentColor"></polygon></svg>
+        </button>
+      </div>
+      <div class="textos">
+        <h2>${song.title}</h2>
+        <p>${song.artist}</p>
+      </div>
+      <form action="/playlist/<%= playlist._id %>/addsong/${song._id }" method="POST">
+        <button class="wobble-button" type="submit">Add To Playlist</button>
+      </form>
+    </div>`
+    });
+
+    document.querySelector('.musi').innerHTML = clutter
+
+
+
+  }
+
+  function songCardClicked(filename) {
+    document.querySelector('audio').setAttribute('src', `/stream/${filename}`)
+    document.querySelector('audio').play()
+  }
+
+  const searchInput = document.getElementById('searchInput');
+const searchButton = document.getElementById('btn');
+
+// Add an event listener to the input field
+searchInput.addEventListener('keyup', function(event) {
+    // Check if the "Enter" key is pressed
+    if (event.key === 'Enter') {
+        // Simulate a click on the search button
+        searchButton.click();
+    }
+});
+// Assuming you have a function like this in your client-side code
+
+async function removeSongFromPlaylist(playlistId, songId) {
+  try {
+    await axios.post(`/playlist/${playlistId}/removesong/${songId}`);
+    // Assuming you want to refresh the page after removing the song
+    window.location.reload();
+  } catch (error) {
+    console.error(error);
+    // Handle the error as needed
+  }
+}
+document.querySelector("#menubtn").addEventListener("click", function() {
+    var leftElement = document.querySelector(".left");
+    if (leftElement.style.top === "0px" || leftElement.style.top === "") {
+        leftElement.style.top = "-100%";
+    } else {
+        leftElement.style.top = "0";
+    }
+});
+
+</script>
+
+
+</body>
+</html>
